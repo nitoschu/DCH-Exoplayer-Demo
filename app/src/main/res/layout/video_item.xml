@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/light_background">
+
+    <ImageView
+        android:id="@+id/videoItemImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="H,16:9"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:contentDescription="Video Thumbnail"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/videoItemPlayIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:translationZ="2dp"
+        android:src="@drawable/ic_baseline_play_circle_filled_40"
+        app:layout_constraintTop_toTopOf="@id/videoItemImage"
+        app:layout_constraintBottom_toBottomOf="@id/videoItemImage"
+        app:layout_constraintStart_toStartOf="@id/videoItemImage"
+        app:layout_constraintEnd_toEndOf="@id/videoItemImage"
+        android:contentDescription="Video Play icon"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/videoItemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/videoItemImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/videoItem4kIcon"
+        app:layout_constraintBottom_toTopOf="@id/videoItemCredit"
+        tools:text="Video Title" />
+
+    <ImageView
+        android:id="@+id/videoItem4kIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationZ="2dp"
+        android:src="@drawable/ic_baseline_4k_20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/videoItemTitle"
+        android:baselineAlignBottom="true"
+        android:visibility="gone"
+        android:contentDescription="Video 4k icon"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/videoItemCredit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:maxLines="1"
+        android:textColor="@color/text_light_gray"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/videoItemTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/videoItemDescription"
+        tools:text="By Google" />
+
+    <TextView
+        android:id="@+id/videoItemDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="12sp"
+        android:maxLines="5"
+        android:textColor="@color/text_medium_gray"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/videoItemCredit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Video Content Description"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
