@@ -1,5 +1,6 @@
 package com.digitalconcerthall.dev.challenge.content
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -28,50 +29,26 @@ class VideoItemViewHolder(
         }
     }
 
-    fun bind(video: Video) {
+    fun bind(item: VideoItem) {
+        with(item) {
 
-        val title = SpannableStringHelper.replaceBracketsWithItalic(video.title)
-        val subtitle = SpannableStringHelper.replaceBracketsWithItalic(video.subtitle)
-        val description = SpannableStringHelper.replaceBracketsWithItalic(video.description)
+            view.findViewById<TextView>(R.id.videoItemTitle).text = title
+            view.findViewById<TextView>(R.id.videoItemCredit).text = subtitle
+            view.findViewById<TextView>(R.id.videoItemDescription).text = description
+            view.findViewById<ImageView>(R.id.videoItem4kIcon).visibility = highDefinitionVisibility
 
-        view.findViewById<TextView>(R.id.videoItemTitle).text = title
-        view.findViewById<TextView>(R.id.videoItemCredit).text = subtitle
-        view.findViewById<TextView>(R.id.videoItemDescription).text = description
+            if (thumbnail != null) {
+                Log.e("#####", "${this.title} *** ${this.video.thumb}")
+                view.findViewById<ImageView>(R.id.videoItemImage)
+                    .setImageBitmap(thumbnail)
+            } else {
+                view.findViewById<ImageView>(R.id.videoItemImage)
+                    .setImageBitmap(null)
+            }
 
-        if (video.hd) {
-            view.findViewById<ImageView>(R.id.videoItem4kIcon).visibility = View.VISIBLE
+            view.setOnClickListener {
+                context.playVideo(video)
+            }
         }
-
-        val imageView = view.findViewById<ImageView>(R.id.videoItemImage)
-        loadImageAsync(imageView, video.thumb)
-
-        view.setOnClickListener {
-            context.playVideo(video)
-        }
-    }
-
-    private fun loadImageAsync(imageView: ImageView, imageUrl: String) {
-        val loadImageSingle = Single.fromCallable {
-            Log.d("Loading image from: $imageUrl")
-            val url = URL(imageUrl)
-            BitmapFactory.decodeStream(url.openConnection().getInputStream())
-        }
-
-        runAsyncIO(loadImageSingle, { bmp ->
-            Log.d("Image $imageUrl loaded, setting bitmap in view")
-            imageView.setImageBitmap(bmp)
-        }, { error ->
-            Log.e(error, "Couldn't load image from: $imageUrl")
-        })
-    }
-
-    private fun <T : Any> runAsyncIO(
-        single: Single<out T>,
-        onSuccess: (T) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        single.observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(onSuccess, onError)
     }
 }

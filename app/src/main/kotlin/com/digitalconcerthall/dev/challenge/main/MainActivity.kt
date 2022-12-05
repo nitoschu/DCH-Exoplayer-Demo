@@ -5,9 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.digitalconcerthall.dev.challenge.R
-import com.digitalconcerthall.dev.challenge.content.Video
-import com.digitalconcerthall.dev.challenge.content.VideoJson
-import com.digitalconcerthall.dev.challenge.content.VideoListRecycleAdapter
+import com.digitalconcerthall.dev.challenge.content.*
 import com.digitalconcerthall.dev.challenge.util.AndroidUtils
 import com.digitalconcerthall.dev.challenge.util.Log
 import com.digitalconcerthall.dev.challenge.video.DCHVideoPlayer
@@ -48,7 +46,15 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = GridLayoutManager(this, spans, GridLayoutManager.VERTICAL, false)
         videoList.layoutManager = layoutManager
         videoList.adapter = adapter
-        adapter.add(videos)
+        val videoItems = videos.toVideoItems()
+        adapter.add(videoItems)
+        videoItems.forEachIndexed { index, videoItem ->
+            Log.e("####", "Requesting bitmap ${videoItem.video.thumb} for video ${videoItem.video.title}")
+            videoItem.loadThumbnailAsync {
+                Log.e("######", "Setting bitmap ${it.video.thumb} for video ${it.video.title}")
+                adapter.replace(index, videoItem)
+            }
+        }
     }
 
     fun playVideo(item: Video) {

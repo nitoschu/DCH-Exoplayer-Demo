@@ -8,7 +8,7 @@ import com.digitalconcerthall.dev.challenge.main.MainActivity
 class VideoListRecycleAdapter(private val context: MainActivity) :
     RecyclerView.Adapter<VideoItemViewHolder>() {
 
-    private val items = mutableListOf<Video>()
+    private val items = mutableListOf<VideoItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoItemViewHolder {
         return VideoItemViewHolder.create(parent, context)
@@ -18,13 +18,18 @@ class VideoListRecycleAdapter(private val context: MainActivity) :
         holder.bind(items[position])
     }
 
-    fun add(videos: List<Video>) {
+    fun add(videos: List<VideoItem>) {
         val pos = itemCount
         items.addAll(videos)
         notifyItemRangeInserted(pos, videos.size)
     }
 
-    fun add(item: Video) {
+    fun replace(position: Int, newItem: VideoItem) {
+        items[position] = newItem
+        notifyItemChanged(position)
+    }
+
+    fun add(item: VideoItem) {
         val pos = itemCount
         items.add(item)
         notifyItemInserted(pos)
