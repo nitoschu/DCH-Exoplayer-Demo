@@ -5,9 +5,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
-import com.digitalconcerthall.dev.challenge.util.SpannableStringHelper.findClosures
-import com.digitalconcerthall.dev.challenge.util.SpannableStringHelper.removeBrackets
-import com.digitalconcerthall.dev.challenge.util.SpannableStringHelper.setItalic
 
 object SpannableStringHelper {
 
@@ -16,7 +13,7 @@ object SpannableStringHelper {
     fun replaceBracketsWithItalic(textComplete: String): SpannableString {
         pairs.clear()
         val builder = SpannableStringBuilder(textComplete).also {
-            it.findClosures()
+            it.findBrackets()
             it.setItalic()
             it.removeBrackets()
         }
@@ -24,7 +21,7 @@ object SpannableStringHelper {
         return SpannableString.valueOf(builder)
     }
 
-    private fun SpannableStringBuilder.findClosures() {
+    private fun SpannableStringBuilder.findBrackets() {
         var currentOpenIndex: Int? = null
         this.asIterable().forEachIndexed { index, char ->
             if (currentOpenIndex == null) {
