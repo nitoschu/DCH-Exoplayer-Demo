@@ -9,6 +9,7 @@ import com.digitalconcerthall.dev.challenge.content.*
 import com.digitalconcerthall.dev.challenge.util.AndroidUtils
 import com.digitalconcerthall.dev.challenge.util.Log
 import com.digitalconcerthall.dev.challenge.video.DCHVideoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.gson.Gson
@@ -49,18 +50,16 @@ class MainActivity : AppCompatActivity() {
         val videoItems = videos.toVideoItems()
         adapter.add(videoItems)
         videoItems.forEachIndexed { index, videoItem ->
-            Log.e("####", "Requesting bitmap ${videoItem.video.thumb} for video ${videoItem.video.title}")
-            videoItem.loadThumbnailAsync {
-                Log.e("######", "Setting bitmap ${it.video.thumb} for video ${it.video.title}")
+            videoItem.loadThumbnailAsync(videos[index].thumb) {
                 adapter.replace(index, videoItem)
             }
         }
     }
 
-    fun playVideo(item: Video) {
+    fun playVideo(videoUri: String) {
         status = PlayerStatus.Preparing
         val playerInstance = DCHVideoPlayer(this, true, statusListener)
-        playerInstance.preparePlayer(item)
+        playerInstance.preparePlayer(videoUri)
         playerView.player = playerInstance.exoPlayer
         player = playerInstance
         playerNoVideoText.visibility = View.GONE
@@ -72,6 +71,13 @@ class MainActivity : AppCompatActivity() {
         status = PlayerStatus.Idle
         playerNoVideoText.visibility = View.VISIBLE
     }
+
+    fun clearPlaylist() = player?.exoPlayer?.clearMediaItems()
+
+    // This allows videos to be added to the playlist multiple times,
+    // because I think that's better UX.
+    fun addVideoToPlaylist(videoUri: String) =
+        player?.exoPlayer?.addMediaItem(MediaItem.fromUri(videoUri))
 
     private val statusListener = object : DCHVideoPlayer.StatusListener() {
         override fun onPlaybackStateChanged(playbackState: Int) {

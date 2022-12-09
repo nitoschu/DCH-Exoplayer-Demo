@@ -11,13 +11,19 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.URL
 
+/**
+ * A class containing video information to be displayed in a UI.
+ *
+ * I created this class to decouple [VideoItemViewHolder] from any business logic, making it
+ * easier to unit test, and to make a possible future transfer to Jetpack Compose easier.
+ */
 data class VideoItem(
     val title: SpannableString,
     val subtitle: SpannableString,
     val description: SpannableString,
     val highDefinitionVisibility: Int,
     var thumbnail: Bitmap?,
-    val video: Video
+    val videoUri: String
 )
 
 fun List<Video>.toVideoItems(): List<VideoItem> {
@@ -29,28 +35,27 @@ fun List<Video>.toVideoItems(): List<VideoItem> {
                 subtitle = SpannableStringHelper.replaceBracketsWithItalic(it.subtitle),
                 description = SpannableStringHelper.replaceBracketsWithItalic(it.description),
                 highDefinitionVisibility = if (it.hd) View.VISIBLE else View.INVISIBLE,
-                thumbnail = null,
-                video = it
+                thumbnail = null, // Will be loaded later to reduce app start time
+                videoUri = it.source
             )
         )
     }
     return res
 }
 
- fun VideoItem.loadThumbnailAsync(onSuccess: (VideoItem) -> Unit) {
-    val imageUrl = video.thumb
+fun VideoItem.loadThumbnailAsync(thumbnailUrl: String, onSuccess: (VideoItem) -> Unit) {
     val loadImageSingle = Single.fromCallable {
-        Log.d("Loading image from: $imageUrl")
-        val url = URL(imageUrl)
+        Log.d("Loading image from: $thumbnailUrl")
+        val url = URL(thumbnailUrl)
         BitmapFactory.decodeStream(url.openConnection().getInputStream())
     }
 
     runAsyncIO(loadImageSingle, { bmp ->
-        Log.d("Image $imageUrl loaded, setting bitmap in view")
+        Log.d("Image $thumbnailUrl loaded, setting bitmap in view")
         thumbnail = bmp
         onSuccess(this)
     }, { error ->
-        Log.e(error, "Couldn't load image from: $imageUrl")
+        Log.e(error, "Couldn't load image from: $thumbnailUrl")
     })
 }
 

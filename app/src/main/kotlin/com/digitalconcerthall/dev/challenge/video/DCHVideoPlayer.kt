@@ -83,9 +83,9 @@ class DCHVideoPlayer(
         exoPlayer.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
     }
 
-    fun preparePlayer(item: Video) {
-        Log.d("Start player with URL: ${item.source}")
-        val mediaSource = buildMediaSource(item)
+    fun preparePlayer(videoUri: String) {
+        Log.d("Start player with URL: $videoUri")
+        val mediaSource = buildMediaSource(videoUri)
 
         exoPlayer.setMediaSource(mediaSource, true)
         exoPlayer.prepare()
@@ -96,8 +96,8 @@ class DCHVideoPlayer(
         exoPlayer.release()
     }
 
-    private fun buildMediaSource(item: Video): MediaSource {
-        val uri = Uri.parse(item.source)
+    private fun buildMediaSource(videoUri: String): MediaSource {
+        val uri = Uri.parse(videoUri)
 
         val factory = when (val type = Util.inferContentType(uri)) {
             C.CONTENT_TYPE_SS -> {

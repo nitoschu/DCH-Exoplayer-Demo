@@ -1,7 +1,7 @@
 package com.digitalconcerthall.dev.challenge.content
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalconcerthall.dev.challenge.R
 import com.digitalconcerthall.dev.challenge.main.MainActivity
-import com.digitalconcerthall.dev.challenge.util.Log
-import com.digitalconcerthall.dev.challenge.util.SpannableStringHelper
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
-import java.net.URL
 
 class VideoItemViewHolder(
     private val view: View,
@@ -29,26 +23,30 @@ class VideoItemViewHolder(
         }
     }
 
-    fun bind(item: VideoItem) {
-        with(item) {
+    fun bind(item: VideoItem) = with(item) {
+        loadThumbnail(thumbnail, view)
+        view.findViewById<TextView>(R.id.videoItemTitle).text = title
+        view.findViewById<TextView>(R.id.videoItemCredit).text = subtitle
+        view.findViewById<TextView>(R.id.videoItemDescription).text = description
+        view.findViewById<ImageView>(R.id.videoItem4kIcon).visibility = highDefinitionVisibility
 
-            view.findViewById<TextView>(R.id.videoItemTitle).text = title
-            view.findViewById<TextView>(R.id.videoItemCredit).text = subtitle
-            view.findViewById<TextView>(R.id.videoItemDescription).text = description
-            view.findViewById<ImageView>(R.id.videoItem4kIcon).visibility = highDefinitionVisibility
+        val playBtn = view.findViewById<ImageView>(R.id.videoItemPlayIcon)
+        playBtn.setOnClickListener { clearPlaylistAndPlayVideo(videoUri) }
 
-            if (thumbnail != null) {
-                Log.e("#####", "${this.title} *** ${this.video.thumb}")
-                view.findViewById<ImageView>(R.id.videoItemImage)
-                    .setImageBitmap(thumbnail)
-            } else {
-                view.findViewById<ImageView>(R.id.videoItemImage)
-                    .setImageBitmap(null)
-            }
+        val addToPlaylistBtn = view.findViewById<ImageView>(R.id.addToPlaylistIcon)
+        addToPlaylistBtn.setOnClickListener { context.addVideoToPlaylist(videoUri) }
+    }
 
-            view.setOnClickListener {
-                context.playVideo(video)
-            }
+    private fun loadThumbnail(thumbnail: Bitmap?, view: View) {
+        if (thumbnail != null) {
+            view.findViewById<ImageView>(R.id.videoItemImage).setImageBitmap(thumbnail)
+        } else {
+            view.findViewById<ImageView>(R.id.videoItemImage).setImageBitmap(null)
         }
+    }
+
+    private fun clearPlaylistAndPlayVideo(videoUri: String) {
+        context.clearPlaylist()
+        context.playVideo(videoUri)
     }
 }
